@@ -12,44 +12,50 @@ public class EmployeeService {
     }
 
     public String addEmployee(String firstName, String lastName) {
+        if (firstName == "" && lastName == "") {
+            throw new EmployeeStorageOverflowException();
+        }else {
         if (size >= employees.length) {
-            throw new EmployeeController.BadParamsException500();
+            throw new EmployeeStorageOverflowException();
         }
         Employee newEmployees=new Employee(firstName,lastName);
         employees[size++]=newEmployees;
         return "Сотрудник "+firstName+" "+lastName+" успешно создан.";
+        }
     }
 
-    public String removeEmployees(String firstName,String lastName) {
+    public String removeEmployees(String firstName,String lastName){
         for (int i = 0; i < employees.length; i++) {
-            try {
-                if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
-                    String saveFirstName=employees[i].getFirstName();
-                    String saveLastName=employees[i].getLastName();
-                    employees[i] = null;
-                    if (i != employees.length - 1) {
-                        System.arraycopy(employees, i + 1, employees, i, size - i);
-                    }
-                    size--;
-                    return "Сотрудник " + saveFirstName + " " + saveLastName + " удален";
+            if (employees[i] == null) {
+                continue;
+            }
+            if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
+                String saveFirstName=employees[i].getFirstName();
+                String saveLastName=employees[i].getLastName();
+                employees[i] = null;
+                if (i != employees.length - 1) {
+                    System.arraycopy(employees, i + 1, employees, i, size - i);
                 }
-            }catch (NullPointerException exception){
-                throw new EmployeeController.BadParamsException404();
+                size--;
+                return "Сотрудник " + saveFirstName + " " + saveLastName + " удален";
             }
         }
-        throw new EmployeeController.BadParamsException404();
+        throw new EmployeeNotFoundException();
     }
 
-    public Object findEmployee(String firstName, String lastName) {
-        try {
-            for (int i = 0; i < employees.length; i++) {
-                if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
-                    return employees[i];
+        public Employee findEmployee(String firstName, String lastName){
+            if (firstName == "" && lastName == ""){
+                throw new EmployeeNotFoundException();
+            }else {
+                for (int i = 0; i < employees.length; i++) {
+                    if (employees[i] == null) {
+                        break;
+                    }
+                    if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
+                        return employees[i];
+                    }
                 }
             }
-        } catch (NullPointerException exception) {
-            throw new EmployeeController.BadParamsException404();
-        }
-        throw new EmployeeController.BadParamsException404();
+        throw new EmployeeNotFoundException();
     }
 }
