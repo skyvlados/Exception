@@ -11,7 +11,7 @@ public class EmployeeService {
         this.employees=new Employee[2];
     }
 
-    public String addEmployee(String firstName, String lastName) {
+    public Employee addEmployee(String firstName, String lastName) {
         if (firstName == "" && lastName == "") {
             throw new EmployeeStorageOverflowException();
         }else {
@@ -20,24 +20,22 @@ public class EmployeeService {
         }
         Employee newEmployees=new Employee(firstName,lastName);
         employees[size++]=newEmployees;
-        return "Сотрудник "+firstName+" "+lastName+" успешно создан.";
+        return newEmployees;
         }
     }
 
-    public String removeEmployees(String firstName,String lastName){
+    public Employee removeEmployees(String firstName, String lastName){
         for (int i = 0; i < employees.length; i++) {
             if (employees[i] == null) {
                 continue;
             }
             if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
-                String saveFirstName=employees[i].getFirstName();
-                String saveLastName=employees[i].getLastName();
-                employees[i] = null;
+                Employee employee = employees[i];
                 if (i != employees.length - 1) {
                     System.arraycopy(employees, i + 1, employees, i, size - i);
                 }
                 size--;
-                return "Сотрудник " + saveFirstName + " " + saveLastName + " удален";
+                return employee;
             }
         }
         throw new EmployeeNotFoundException();
@@ -46,14 +44,13 @@ public class EmployeeService {
         public Employee findEmployee(String firstName, String lastName){
             if (firstName == "" && lastName == ""){
                 throw new EmployeeNotFoundException();
-            }else {
-                for (int i = 0; i < employees.length; i++) {
-                    if (employees[i] == null) {
-                        break;
-                    }
-                    if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
-                        return employees[i];
-                    }
+            }
+            for (int i = 0; i < employees.length; i++) {
+                if (employees[i] == null) {
+                    break;
+                }
+                if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
+                    return employees[i];
                 }
             }
         throw new EmployeeNotFoundException();
