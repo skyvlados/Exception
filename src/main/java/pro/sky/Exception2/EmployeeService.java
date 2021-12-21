@@ -47,7 +47,7 @@ public class EmployeeService {
             }
             for (int i = 0; i < employees.length; i++) {
                 if (employees[i] == null) {
-                    break;
+                    continue;
                 }
                 if (firstName.equals(employees[i].getFirstName()) && lastName.equals(employees[i].getLastName())) {
                     return employees[i];
